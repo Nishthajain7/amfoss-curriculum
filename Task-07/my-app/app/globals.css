@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.topBar{
+  display: flex;
+  height: 7rem;
+  gap: 1rem;
+  background-color: #e8daef;
+  align-items: center;
+}
+
+.searchbox {
+  position: relative;
+  width: 80%;
+  border-radius: 2rem;
+  margin: auto;  
+}
+
+input {
+  width: 100%;
+  padding: 0.2rem;
+  padding-left: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  border-radius: 2rem;
+}
+
+.link{
+  padding-left: 1rem;
+}
+
+.contents {
+  background-color: #f4e8fa;
+  display: grid;
+  justify-content: center;
+  height: 100%;
+}
