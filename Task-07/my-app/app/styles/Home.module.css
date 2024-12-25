@@ -1,15 +1,10 @@
 .moviesGrid {
-  padding: 5rem;
-  /* margin-top: 5rem;
-  margin-left: 5rem;
-  margin-right: 5rem; */
+  position: relative;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 30px;
-  justify-content: center;
-  align-items: center;
-  /* margin: 0 auto; */
-  /* background-color: aqua; */
+  padding-left: 5rem;
+  padding-right: 5rem;
 }
 
 .movieHolder {
