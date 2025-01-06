@@ -3,7 +3,7 @@ import 'pokemon.dart';
 
 class PokemonDetailsScreen extends StatelessWidget {
   final Pokemon pokemon;
-  PokemonDetailsScreen({super.key, required this.pokemon});
+  const PokemonDetailsScreen({super.key, required this.pokemon});
   @override
   Widget build(BuildContext context) {
     final content = [
