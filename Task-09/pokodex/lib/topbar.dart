@@ -3,10 +3,8 @@ import 'login.dart';
 
 class TopBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isLoggedIn;
-  final Function(bool, String) loggedIn;
-  final TextEditingController usernameController;
-  final TextEditingController passwordController;
-  const TopBar({super.key, required this.isLoggedIn, required this.loggedIn, required this.usernameController,required this.passwordController});
+  final Function(bool, String, List<Map<String, dynamic>>, String) loggedIn;
+  const TopBar({super.key, required this.isLoggedIn, required this.loggedIn});
 
   @override
   TopBarState createState() => TopBarState();
@@ -31,9 +29,8 @@ class TopBarState extends State<TopBar> {
             ),
             onPressed: () {
               if (widget.isLoggedIn) { // If user is logged in, log out
-                widget.loggedIn(false, '');
-                // widget.usernameController.clear();
-                // widget.passwordController.clear();
+                widget.loggedIn(false, '', [], '');
+                // widget.isLoggedIn = false;
               } else {
                 Navigator.push(
                   context,

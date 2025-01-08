@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pokodex/register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'topbar.dart';
 
 class Login extends StatefulWidget {
-  final Function(bool, String) loggedIn;
+  final Function(bool, String, List<Map<String, dynamic>>, String) loggedIn;
   const Login({required this.loggedIn, super.key});
 
   @override
@@ -14,21 +16,37 @@ class LoginState extends State<Login> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool isRegistering = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  Map<String, String> users = {};
+// users = {
+//   "user1": {
+//     "password": "password1",
+//     "name": "name1"
+//   },
+//   "user2": {
+//     "password": "password2",
+//     "name": "name2"
+//   }
+// }
+//
+// userjson = '{"user1": {"password": "password1", "name": "name1"}, "user2": {"password": "password2", "name": "name2"}}'
 
-  void _login() {
+
+  void login() async {
     final username = _usernameController.text.trim();
     final password = _passwordController.text;
+    final prefs = await SharedPreferences.getInstance();
+    String? usersJson = prefs.getString('users');
+    Map<String, dynamic> users = usersJson != null ? Map<String, dynamic>.from(jsonDecode(usersJson)) : {};
     if(users.containsKey(username)){
-      if(users[username]==password){
-        widget.loggedIn(true, username);
+      if(users[username]['password'] == password){
+        String name = users[username]['name'] ?? '';
+        List<Map<String, dynamic>> mypokemons = List<Map<String, dynamic>>.from(users[username]['pokemon']);
+        widget.loggedIn(true, name, mypokemons, username);
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Incorrect password')));
@@ -38,17 +56,20 @@ class LoginState extends State<Login> {
     }
   }
 
-  void _navigatetoregister() {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => Register(
-        registered: (registered, username, password) {
+  void _navigatetoregister() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? usersJson = prefs.getString('users');
+    Map<String, dynamic> users = usersJson != null ? Map<String, dynamic>.from(jsonDecode(usersJson)) : {};
+    Navigator.push(context,
+      MaterialPageRoute(
+        builder: (context) => Register(
+          registered: (registered, username, password, name, mypokemons) {
           if(registered){
             if(users.containsKey(username)){
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User $username already exists')));  
             } else {
-            users[username]=password;
+            users[username] = {'password': password, 'name': name, 'pokemon': mypokemons};
+            prefs.setString('users', jsonEncode(users));
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User $username registered successfully. You can now login')));  
             }
           }
@@ -63,10 +84,8 @@ class LoginState extends State<Login> {
   Widget build(BuildContext context) {
       return Scaffold(
         appBar: TopBar(
-        isLoggedIn: false, // Change this based on your actual state
+        isLoggedIn: false,
         loggedIn: widget.loggedIn,
-        usernameController: _usernameController,
-        passwordController: _passwordController,
       ),
           body: Center(
             child: Form(
@@ -113,7 +132,7 @@ class LoginState extends State<Login> {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                         child: ElevatedButton(
-                          onPressed: _login,
+                          onPressed: login,
                           child: Text('Log in',
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),

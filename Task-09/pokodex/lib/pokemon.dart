@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
 class Pokemon {
   final int id;
   final Map<String, String> name;
@@ -35,6 +38,19 @@ class Pokemon {
       image: Map<String, String>.from(json['image']),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'type': type,
+      'base': base.toJson(),
+      'species': species,
+      'description': description,
+      'profile': profile.toJson(),
+      'image': image,
+    };
+  }
 }
 
 class Profile {
@@ -60,6 +76,16 @@ class Profile {
       ability: List<List<dynamic>>.from(json['ability'].map((item) => List<dynamic>.from(item))),
       gender: json['gender'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'height': height,
+      'weight': weight,
+      'egg': egg,
+      'ability': ability,
+      'gender': gender,
+    };
   }
 }
 
@@ -89,6 +115,26 @@ class Base {
       spDefense: json['Sp. Defense'],
       speed: json['Speed']
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'HP': hp,
+      'Attack': attack,
+      'Defense': defense,
+      'Sp. Attack': spAttack,
+      'Sp. Defense': spDefense,
+      'Speed': speed,
+    };
+  }
+}
+
+class PokemonData {
+  List<Pokemon> pokemonList = [];
+  Future<void> loadPokemonData() async {
+    final String jsonString = await rootBundle.loadString('assets/pokodex.json');
+    final List<dynamic> jsonData = jsonDecode(jsonString);
+    pokemonList = jsonData.map((item) => Pokemon.fromJson(item)).toList();
   }
 }
 

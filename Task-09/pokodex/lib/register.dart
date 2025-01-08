@@ -1,7 +1,9 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'pokemon.dart';
 
 class Register extends StatefulWidget {
-  final Function(bool, String, String) registered;
+  final Function(bool, String, String, String, List<Map<String, dynamic>>) registered;
   const Register({required this.registered, super.key});
 
   @override
@@ -15,11 +17,27 @@ class RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   bool isRegistering = false;
 
+  final PokemonData pokemonData = PokemonData();
+  List<Pokemon> pokemonList= [];
+  @override
+  void initState() {
+    super.initState();
+    _loadPokemonData();
+  }
+  Future<void> _loadPokemonData() async {
+    await pokemonData.loadPokemonData();
+    setState(() {
+      pokemonList = pokemonData.pokemonList;});
+  }
+  
   void _register() {
     if (_formKey.currentState!.validate()) {
-    final username = _usernameController.text.trim();
-    final password = _passwordController.text;
-    widget.registered(true, username, password);
+      final username = _usernameController.text.trim();
+      final password = _passwordController.text;
+      final name = _nameController.text;
+      final randomPokemon = pokemonList[Random().nextInt(pokemonList.length)];
+      final List<Map<String, dynamic>> mypokemons = [{'pokemon': randomPokemon.toJson(), 'quantity': 1,}];
+      widget.registered(true, username, password, name, mypokemons);
     }
   }
 
@@ -90,9 +108,7 @@ class RegisterState extends State<Register> {
                         padding: const EdgeInsets.only(top: 20.0),
                         child: ElevatedButton(
                           onPressed: _register,
-                          child: Text('Register',
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
+                          child: Text('Register',style: TextStyle(color: Colors.white, fontSize: 20),),
                         ),
                       ),
                     ),

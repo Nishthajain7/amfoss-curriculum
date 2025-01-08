@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokodex/trade.dart';
-import 'pokemon_list.dart';
+import 'home.dart';
+import 'capture.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
@@ -15,16 +17,22 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
-  bool _isLoggedIn =false;
+  bool _isLoggedIn = false;
   String _name = '';
+  String _username = '';
+  List<Map<String, dynamic>> _mypokemons = [];
 
-  void _loggedIn(bool loggedIn, [String name = '']) {
-    setState(() {_isLoggedIn = loggedIn;
-    if (loggedIn && name.isNotEmpty) {
-        _name = name;
-      }
-    });
-  }
+  void _loggedIn(bool loggedIn, String name, List<Map<String, dynamic>> mypokemons,String username) {
+  setState(() {
+    _isLoggedIn = loggedIn;
+    if (loggedIn) {
+      _name = name;
+      _mypokemons = mypokemons;
+      _username = username;
+    }
+  });
+
+}
 
   void _onTap(int index) {
     setState(() {
@@ -36,8 +44,8 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
     PokemonListScreen(isLoggedIn: _isLoggedIn, loggedIn: _loggedIn),
-    TradeScreen(isLoggedIn: _isLoggedIn, loggedIn: _loggedIn, name: _name,),
-    Center(child: Text('Capture Page')),
+    TradeScreen(isLoggedIn: _isLoggedIn, loggedIn: _loggedIn, name: _name, mypokemons: _mypokemons, username: _username,),
+    CaptureScreen(isLoggedIn: _isLoggedIn, loggedIn: _loggedIn, mypokemons: _mypokemons, username: _username),
   ];
     return MaterialApp(
       title: 'Pokedex',

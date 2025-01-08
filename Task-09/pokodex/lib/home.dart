@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'topbar.dart';
 import 'pokemon.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart';
-import 'superhero_details.dart';
+import 'details.dart';
 
 class PokemonListScreen extends StatefulWidget {
   final bool isLoggedIn;
-  final Function(bool, String) loggedIn;
+  final Function(bool, String, List<Map<String, dynamic>>, String) loggedIn;
   const PokemonListScreen({super.key, required this.isLoggedIn, required this.loggedIn});
   @override
   PokemonListScreenState createState() => PokemonListScreenState();
 }
 
 class PokemonListScreenState extends State<PokemonListScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  List<Pokemon> pokemonList = [];
+  final PokemonData pokemonData = PokemonData();
+  List<Pokemon> pokemonList= [];
   @override
   void initState() {
     super.initState();
@@ -24,10 +21,9 @@ class PokemonListScreenState extends State<PokemonListScreen> {
   }
 
   Future<void> _loadPokemonData() async {
-    final String jsonString = await rootBundle.loadString('assets/pokodex.json');
-    final List<dynamic> jsonData = jsonDecode(jsonString);
+    await pokemonData.loadPokemonData();
     setState(() {
-      pokemonList = jsonData.map((item) => Pokemon.fromJson(item)).toList();
+      pokemonList = pokemonData.pokemonList;
     });
   }
   @override
@@ -37,7 +33,7 @@ class PokemonListScreenState extends State<PokemonListScreen> {
       title: 'Pokodex',
       theme: ThemeData.dark(),
       home: Scaffold(
-        appBar: TopBar(isLoggedIn: widget.isLoggedIn, loggedIn: widget.loggedIn,usernameController: _usernameController, passwordController: _passwordController,),
+        appBar: TopBar(isLoggedIn: widget.isLoggedIn, loggedIn: widget.loggedIn,),
         body: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
@@ -51,10 +47,7 @@ class PokemonListScreenState extends State<PokemonListScreen> {
             return GestureDetector(
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          PokemonDetailsScreen(pokemon: pokemon)),
-                );
+                  MaterialPageRoute(builder: (context) => PokemonDetailsScreen(pokemon: pokemon)),);
               },
               child: Center(
                 child: Card(
@@ -64,13 +57,7 @@ class PokemonListScreenState extends State<PokemonListScreen> {
                     child: Column(
                       children: [
                         img,
-                        Text(
-                          pokemon.name['english'] ?? 'Name unknown',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        Text(pokemon.name['english'] ?? 'Name unknown', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
                       ],
                     ),
                   ),
