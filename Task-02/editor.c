@@ -2,6 +2,10 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdio.h>
 #define KILO_QUERY_LEN 256
 #define KILO_TAB_STOP 8
 #define ABUF_INIT {NULL, 0}
