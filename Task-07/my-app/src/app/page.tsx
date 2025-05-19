@@ -13,9 +13,6 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [FormOpen, setFormOpen] = useState(false);
   const [Registering, setRegistering] = useState(false);
-  // const [name, setName] = useState("");
-  // const [username, setUsername] = useState("");
-  // const [password, setPassword] = useState("");
   const [incorrectLogin, setIncorrectLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userata, setuserData] = useState({
@@ -40,7 +37,7 @@ export default function Home() {
   };
   
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent form submission default action
+    e.preventDefault();
     try {
       const route = Registering ? 'http://localhost:5000/register' : 'http://localhost:5000/login';
       const response = await fetch(route, {
@@ -60,17 +57,17 @@ export default function Home() {
       if (response.ok && data.status === 'success') {
         if (Registering) {
           alert('Registration successful! Please log in.');
-          setRegistering(false); // Switch to login form
+          setRegistering(false);
         } else {
           setFormOpen(false);
           setIsLoggedIn(true);
-        }  // You can replace this with any redirect path you want
+        }
       } else {
         setIncorrectLogin(true);
       }
     } catch (error) {
       console.error('Login failed:', error);
-      setIncorrectLogin(true);  // Handle fetch error
+      setIncorrectLogin(true);
     }
   };
 

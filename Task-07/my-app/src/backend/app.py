@@ -11,39 +11,53 @@ USERNAME = 'admin'
 PASSWORD = 'a123'
 
 def init_db():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("database.db", timeout=5)
     cursor = conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS USERS (
                 name TEXT NOT NULL,
                 username TEXT UNIQUE NOT NULL,
-                email TEXT NOT NULL,
-                phone TEXT NOT NULL,
-                whatsapp TEXT NOT NULL,
-                dob TEXT NOT NULL,
-                genres TEXT NOT NULL,
+                email TEXT,
+                phone TEXT,
+                whatsapp TEXT,
+                dob TEXT,
+                genres TEXT,
                 password TEXT NOT NULL)""")    
     print("made")
     conn.commit()
 
 @app.route('/register', methods=['POST'])
 def register():
+    print("Register route hit") 
     data = request.get_json()
+    print("Received registration data:", data)
     name = data.get('name')
     username = data.get('username')
     password = data.get('password')
+    email = data.get('email')
+    phone = data.get('phone')
+    whatsapp = data.get('whatsapp')
+    dob = data.get('dob')
+    genres = data.get('genres')
 
     if not name or not username or not password:
-        return jsonify({"status": "error", "message": "All fields are required"}), 400
+        return jsonify({"status": "error", "message": "Required fields missing"}), 400
 
     try:
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO USERS (name, username, password) VALUES (?, ?, ?)",(name, username, password))
+        cursor.execute(
+            "INSERT INTO USERS (name, username, email, phone, whatsapp, dob, genres, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (name, username, email, phone, whatsapp, dob, genres, password)
+        )
+        print("added")
         conn.commit()
         print("User successfully registered:", name, username)
         return jsonify({"status": "success", "message": "Registration successful"}), 201
-    except sqlite3.IntegrityError:
+    except sqlite3.IntegrityError as e:
+        print("IntegrityError:", e)
         return jsonify({"status": "error", "message": "Username already exists"}), 409
+    finally:
+        conn.close()
 
 
 @app.route('/login', methods=['GET', 'POST'])
